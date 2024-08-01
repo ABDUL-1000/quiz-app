@@ -1,0 +1,57 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Roboto', sans-serif;
+    
+}
+.fonts{
+    font-family: "Roboto Slab", serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 1rem;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.btn {
+    font-size: 1rem;
+    border-radius: 0.5rem;
+}
+
+.data-view .row {
+    margin-bottom: 1rem;
+}
+
+.data-view .row .shadow {
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.data-view .row .d-flex {
+    align-items: center;
+}
+
+.data-view .row .question {
+    margin: 0 0 0 0.5rem;
+}
+
+.data-view .row .w-100 {
+    margin-top: 1rem;
+}
+
+.result {
+    font-weight: bold;
+    margin-top: 1rem;
+}
+.hide{
+    display: none;
+}
