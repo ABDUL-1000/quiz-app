@@ -37,8 +37,7 @@ let quizData = [
   { question: "What is the chemical symbol for iron?", options: ["Ir", "Fe", "I"], answer: "Fe" },
   { question: "What is the largest desert in the world?", options: ["Sahara", "Arctic", "Antarctic"], answer: "Antarctic" },
   { question: "What is the capital of Germany?", options: ["Munich", "Frankfurt", "Berlin"], answer: "Berlin" },
-  { question: "Who developed the theory of relativity?", options: ["Isaac Newton", "Albert Einstein", "Galileo Galilei"], answer: "Albert Einstein" },
-  { question: "What is the main process by which plants make their own food?", options: ["Respiration", "Photosynthesis", "Transpiration"], answer: "Photosynthesis" },
+  { question: "What is the process by which plants make their own food?", options: ["Respiration", "Photosynthesis", "Transpiration"], answer: "Photosynthesis" },
   { question: "What is the capital of Spain?", options: ["Barcelona", "Seville", "Madrid"], answer: "Madrid" },
   { question: "What is the most abundant gas in the Earth's atmosphere?", options: ["Oxygen", "Nitrogen", "Carbon Dioxide"], answer: "Nitrogen" },
   { question: "What is the main ingredient in guacamole?", options: ["Tomato", "Avocado", "Onion"], answer: "Avocado" },
@@ -64,29 +63,29 @@ let previousButton = document.getElementById("previous");
 let currentPage = 0;
 const questionsPerPage = 1;
 let result = 0;
-let selectedAnswers = {};
+let userAnswers = []; // Array to store user answers
 
 function renderQuiz(page) {
   let start = page * questionsPerPage;
   let end = start + questionsPerPage;
   let quizArray = quizData.slice(start, end).map((quiz, index) => {
-      let questionIndex = start + index;
-      let selectedValue = selectedAnswers[questionIndex] || "";
       return `<div class="row bg-light fonts shadow-sm">
                   <div class="col-md-8 p-3">
                       <div class="d-flex align-items-center">
-                          <p class="col-1">${questionIndex + 1}</p>
+                          <p class="col-1">${start + index + 1}</p>
                           <p class="question mb-0" style="font-size: 15px;">${quiz.question}</p>
                       </div>
-                      <select class="form-select w-100 py-2" ${selectedValue ? 'disabled' : ''}>
-                          <option value="" disabled ${!selectedValue ? 'selected' : ''}>Select an answer</option>
-                          ${quiz.options.map(option => `<option value="${option}" ${option === selectedValue ? 'selected' : ''}>${option}</option>`).join("")}
+                      <select class="form-select w-100 py-2" ${userAnswers[start + index] ? 'disabled' : ''}>
+                          <option value="" disabled ${userAnswers[start + index] ? '' : 'selected'}>Select an answer</option>
+                          ${quiz.options.map(option => 
+                              `<option value="${option}" ${userAnswers[start + index] === option ? 'selected' : ''}>${option}</option>`
+                          ).join("")}
                       </select>
                   </div>
                   <div class="col-md-4 p-3">
-                      <p class="selected">Selected answer: ${selectedValue}</p>
-                      <p class="correct">Correct answer: ${quiz.answer}</p>
-                      <p class="status">Status: ${selectedValue ? (quiz.answer === selectedValue ? 'Correct' : 'Wrong') : ''}</p>
+                      <p class="selected">Selected answer: ${userAnswers[start + index] || ''}</p>
+                      <p class="correct" style="display: none;">Correct answer: ${quiz.answer}</p>
+                      <p class="status" style="display: none;">Status: </p>
                   </div>
               </div>`;
   }).join("");
@@ -95,23 +94,23 @@ function renderQuiz(page) {
 
   let selectedItem = document.querySelectorAll("select");
   selectedItem.forEach((select, index) => {
-      let questionIndex = start + index;
       select.addEventListener("change", (event) => {
           let selectValue = event.target.value;
-          selectedAnswers[questionIndex] = selectValue;
-          let picked = document.querySelectorAll(".selected")[index];
-          picked.innerHTML = `Selected answer: ${selectValue}`;
-          let correct = document.querySelectorAll(".correct")[index];
-          correct.innerHTML = `Correct answer: ${quizData[questionIndex].answer}`;
-
+          let selectedAnswer = document.querySelectorAll(".selected")[index];
+          selectedAnswer.innerHTML = `Selected answer: ${selectValue}`;
+          let correctAnswer = document.querySelectorAll(".correct")[index];
+          correctAnswer.innerHTML = `Correct answer: ${quizData[start + index].answer}`;
+          correctAnswer.style.display = "block";
+          
           let status = document.querySelectorAll(".status")[index];
-          if (quizData[questionIndex].answer === selectValue) {
-              status.innerHTML = "Status: Correct";
+          status.innerHTML = `Status: ${quizData[start + index].answer === selectValue ? 'Correct' : 'Wrong'}`;
+          status.style.display = "block";
+
+          if (quizData[start + index].answer === selectValue) {
               result += 2;
-          } else {
-              status.innerHTML = "Status: Wrong";
           }
           resultDisplay.innerHTML = `${result}/100`;
+          userAnswers[start + index] = selectValue; // Store the selected answer
           select.disabled = true;
       });
   });
@@ -122,7 +121,7 @@ function renderQuiz(page) {
 
 function startGame() {
   result = 0;
-  selectedAnswers = {};
+  userAnswers = []; // Reset user answers
   resultDisplay.innerHTML = `0/100`;
   currentPage = 0;
   renderQuiz(currentPage);
@@ -131,12 +130,11 @@ function startGame() {
   newButton.classList.remove("hide");
   document.querySelector(".card-footer").classList.remove("hide");
   document.querySelector(".result").classList.remove("hide");
-
 }
 
 function newGame() {
   result = 0;
-  selectedAnswers = {};
+  userAnswers = []; // Reset user answers
   resultDisplay.innerHTML = `0/100`;
   dataView.innerHTML = "";
   previousButton.style.display = "none";
