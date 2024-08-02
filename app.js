@@ -83,7 +83,7 @@ function renderQuiz(page) {
                       </select>
                   </div>
                   <div class="col-md-4 p-3">
-                      <p class="selected">Selected answer: ${userAnswers[start + index] || ''}</p>
+                      <p class="selected"> ${userAnswers[start + index] || ''}</p>
                       <p class="correct" style="display: none;">Correct answer: ${quiz.answer}</p>
                       <p class="status" style="display: none;">Status: </p>
                   </div>
